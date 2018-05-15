@@ -101,7 +101,7 @@ def ip_test(proxies, timeout):
                 logging.warning(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+": " + p + " out of time")
                 resp_time = end -start
                 modify_score(p, 1, resp_time)
-                print 'Database test succeed: '+p+'\t'+str(resp_time)
+                print('Database test succeed: '+p+'\t'+str(resp_time))
         except OSError:
             modify_score(p, 0, 0)
 
@@ -124,8 +124,8 @@ def assess():
         if len(ip_list) == 0:
             return
         ip_test(ip_list, cfg.timeout)
-        print ">>>>> Waiting for the next assessment <<<<<"
-        print ">>>>> You can terminate me now if you like <<<<<"
+        print(">>>>> Waiting for the next assessment <<<<<")
+        print(">>>>> You can terminate me now if you like <<<<<")
     except Exception as e:
         logging.warning(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+": " + str(e))
     finally:

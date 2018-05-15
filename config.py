@@ -5,13 +5,13 @@ Page number that you crawl from those websites.
 * if your crawl task is not heavy, set page_num=2~5
 * if you'd like to keep a proxies pool, page_num=10 can meet your need.
 """
-page_num = 1
+page_num = 3
 
 # ip test timeout.
-timeout = 4
+timeout = 2
 
 # database host
-host = '127.0.0.1'
+host = ''
 
 # database host
 port = 3306
@@ -20,7 +20,7 @@ port = 3306
 user = 'root'
 
 # db password
-passwd = '123456'
+passwd = ''
 
 # db name
 DB_NAME = 'proxies'

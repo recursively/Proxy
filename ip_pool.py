@@ -52,7 +52,7 @@ class IPFactory:
             cursor.execute(create_table_str)
             conn.commit()
         except OSError:
-            print "cannot create database! please check your username & password."
+            print("cannot create database! please check your username & password.")
         finally:
             cursor.close()
             conn.close()
@@ -87,7 +87,7 @@ class IPFactory:
 
                     ip_list.append(full_ip)
         except Exception as e:
-            print 'get proxies error: ', e
+            print('get proxies error: ', e)
 
         return ip_list
 
@@ -102,7 +102,7 @@ class IPFactory:
         ###################################
         url_xpath_66 = '/html/body/div[last()]//table//tr[position()>1]/td[1]/text()'
         port_xpath_66 = '/html/body/div[last()]//table//tr[position()>1]/td[2]/text()'
-        for i in xrange(self.page_num):
+        for i in range(self.page_num):
             url_66 = 'http://www.66ip.cn/' + str(i+1) + '.html'
             results = self.get_content(url_66, url_xpath_66, port_xpath_66)
 
@@ -117,7 +117,7 @@ class IPFactory:
         ###################################
         url_xpath_xici = '//table[@id="ip_list"]//tr[position()>1]/td[position()=2]/text()'
         port_xpath_xici = '//table[@id="ip_list"]//tr[position()>1]/td[position()=3]/text()'
-        for i in xrange(self.page_num):
+        for i in range(self.page_num):
             url_xici = 'http://www.xicidaili.com/nn/' + str(i+1)
             results = self.get_content(url_xici, url_xpath_xici, port_xpath_xici)
             self.all_ip.update(results)
@@ -129,7 +129,7 @@ class IPFactory:
         ###################################
         url_xpath_mimi = '//table[@class="list"]//tr[position()>1]/td[1]/text()'
         port_xpath_mimi = '//table[@class="list"]//tr[position()>1]/td[2]/text()'
-        for i in xrange(self.page_num):
+        for i in range(self.page_num):
             url_mimi = 'http://www.mimiip.com/gngao/' + str(i+1)
             results = self.get_content(url_mimi, url_xpath_mimi, port_xpath_mimi)
             self.all_ip.update(results)
@@ -141,15 +141,15 @@ class IPFactory:
         ###################################
         url_xpath_kuaidaili = '//td[@data-title="IP"]/text()'
         port_xpath_kuaidaili = '//td[@data-title="PORT"]/text()'
-        for i in xrange(self.page_num):
+        for i in range(self.page_num):
             url_kuaidaili = 'http://www.kuaidaili.com/free/inha/' + str(i+1) + '/'
             results = self.get_content(url_kuaidaili, url_xpath_kuaidaili, port_xpath_kuaidaili)
             self.all_ip.update(results)
             current_all_ip.update(results)
             time.sleep(0.5)
 
-        print current_all_ip
-        print ">>>>>>>>>>>>>> All proxies has been crawled <<<<<<<<<<<"
+        print(current_all_ip)
+        print(">>>>>>>>>>>>>> All proxies has been crawled <<<<<<<<<<<")
         return current_all_ip
 
     def get_valid_ip(self, ip_set, manager_list, timeout):
@@ -170,11 +170,11 @@ class IPFactory:
 
                 # judge if proxy valid
                 if r.status_code == 200:
-                    print 'succeed: ' + p + '\t' + " succeed in " + format(end-start, '0.4f') + 's!'
+                    print('succeed: ' + p + '\t' + " succeed in " + format(end-start, '0.4f') + 's!')
                     # add to result
                     manager_list.append(p)
             except Exception:
-                print p + "\t timeout."
+                print(p + "\t timeout.")
 
     def multi_thread_validation(self, ip_set, manager_list, timeout, thread=50):
         """
@@ -184,10 +184,10 @@ class IPFactory:
             thread = len(ip_set)
 
         # divide ip_set to blocks for later multiprocess.
-        slice_len = len(ip_set) / thread
+        slice_len = int(len(ip_set) / thread)
 
         jobs = []
-        for i in xrange(thread-1):
+        for i in range(thread-1):
             part = set(random.sample(ip_set, slice_len))
             ip_set -= part
             p = Process(target=self.get_valid_ip, args=(part, manager_list, timeout))
@@ -209,11 +209,11 @@ class IPFactory:
         save all valid proxies into db
         """
         if len(valid_ips) == 0:
-            print "not proxy available for this time."
+            print("not proxy available for this time.")
             return
 
         # store valid proxies into db.
-        print "\n>>>>>>>>>>>>>>>>>>>> Insert to database Start  <<<<<<<<<<<<<<<<<<<<<<"
+        print("\n>>>>>>>>>>>>>>>>>>>> Insert to database Start  <<<<<<<<<<<<<<<<<<<<<<")
         conn = mdb.connect(cfg.host, cfg.user, cfg.passwd, cfg.DB_NAME)
         cursor = conn.cursor()
         try:
@@ -227,19 +227,19 @@ class IPFactory:
                     conn.commit()
 
                     if n:
-                        print datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" "+item+" insert successfully."
+                        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" "+item+" insert successfully.")
                     else:
-                        print datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" "+item+" insert failed."
+                        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" "+item+" insert failed.")
 
                 else:
-                    print datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" "+ item + " exists."
+                    print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+" "+ item + " exists.")
         except Exception as e:
-            print "store to db failed：" + str(e)
+            print("store to db failed：" + str(e))
         finally:
             cursor.close()
             conn.close()
-        print ">>>>>>>>>>>>>>>>>>>> Insert to database Ended  <<<<<<<<<<<<<<<<<<<<<<"
-        print "Finished."
+        print(">>>>>>>>>>>>>>>>>>>> Insert to database Ended  <<<<<<<<<<<<<<<<<<<<<<")
+        print("Finished.")
 
     def get_proxies(self, manager_list):
         ip_list = []
@@ -264,7 +264,7 @@ class IPFactory:
                 self.save_to_db(valid_ips)
                 ip_list.extend(valid_ips)
         except Exception as e:
-            print "get ip from database failed." + str(e)
+            print("get ip from database failed." + str(e))
         finally:
             cursor.close()
             conn.close()
@@ -279,8 +279,8 @@ def main():
         manager_list = manager.list()
         current_ips = ip_pool.get_all_ip()
         ip_pool.multi_thread_validation(current_ips, manager_list, cfg.timeout)
-        print "\n>>>>>>>>>>>>> Valid proxies <<<<<<<<<<"
-        print manager_list + '\n'
+        print("\n>>>>>>>>>>>>> Valid proxies <<<<<<<<<<")
+        print(str(manager_list) + '\n')
         ip_pool.save_to_db(manager_list)
         time.sleep(cfg.CHECK_TIME_INTERVAL)
 
